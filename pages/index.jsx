@@ -2,9 +2,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Banner from '../components/Banner'
 import Header from '../components/Header'
+import SmallCard from '../components/SmallCard'
 
 
-export default function Home() {
+export default function Home({ exploreData }) {
     return (
         <div className="" >
             <Head >
@@ -16,6 +17,36 @@ export default function Home() {
 
             <Header />
             <Banner />
+
+
+            <main className='max-w-7xl mx-auto px-8 sm:px-16'>
+                <section className='pt-6'>
+                    <h2 className='text-4xl font-semi-bold pb-5 pt-6'>Explore Nearby</h2>
+
+                    {/* Fetch from API */}
+
+                    {exploreData?.map((item) => (
+                        <SmallCard key={item.img} img={item.img} distance={item.distance} location={item.location} />
+                    ))}
+                </section>
+            </main>
         </div>
     )
+}
+
+
+export async function getStaticProps() {
+    const https = require('https')
+    const agent = new https.Agent({
+        rejectUnauthorized: false
+    })
+    const exploreData = await fetch('https://links.papareact.com/pyp', { agent }).
+        then((res) => res.json()
+        )
+
+    return {
+        props: {
+            exploreData,
+        },
+    }
 }
